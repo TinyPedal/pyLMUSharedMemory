@@ -155,21 +155,19 @@ def vehicle_model_info(data: list[lmu_data.LMUVehicleTelemetry], total_vehicles:
         print(model)
 
 
-def test():
-    """Example usage"""
-    compare_struct_size()
+def list_zero_data(data, source):
+    print("List of zero data:", source.__name__)
+    for var, _ in source._fields_:
+        value = getattr(data, var)
+        if not value:
+            print(var, value)
 
+
+def test_data(info: lmu_data.SimInfo, player_index, selected_player_index):
+    """Example usage"""
     separator = "-" * 40
 
     print(separator)
-
-    info = lmu_data.SimInfo()
-
-    # Uncomment to save raw memory data to file
-    # info.save("LMU_SHARED_MEMORY_FILE.txt")
-
-    player_index = info.LMUData.telemetry.playerVehicleIdx
-    selected_player_index = player_index
 
     print("Player Index:")
     print("Local player index:", player_index)
@@ -208,5 +206,37 @@ def test():
     vehicle_model_info(info.LMUData.telemetry.telemInfo, info.LMUData.scoring.scoringInfo.mNumVehicles)
 
 
+def verify_data(info: lmu_data.SimInfo, player_index):
+    separator = "-" * 40
+
+    print(separator)
+
+    list_zero_data(info.LMUData.scoring.scoringInfo, lmu_data.LMUScoringInfo)
+
+    print(separator)
+
+    list_zero_data(info.LMUData.scoring.vehScoringInfo[player_index], lmu_data.LMUVehicleScoring)
+
+    print(separator)
+
+    list_zero_data(info.LMUData.telemetry.telemInfo[player_index], lmu_data.LMUVehicleTelemetry)
+
+    print(separator)
+
+    list_zero_data(info.LMUData.telemetry.telemInfo[player_index].mWheels[0], lmu_data.LMUWheel)
+
+
 if __name__ == "__main__":
-    test()
+    compare_struct_size()
+
+    info = lmu_data.SimInfo()
+
+    # Uncomment to save raw memory data to file
+    # info.save("LMU_SHARED_MEMORY_FILE.txt")
+
+    player_index = info.LMUData.telemetry.playerVehicleIdx
+    selected_player_index = player_index
+
+    test_data(info, player_index, selected_player_index)
+
+    verify_data(info, selected_player_index)
