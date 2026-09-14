@@ -1,6 +1,7 @@
 # ignore list
 
 __pycache__/
+.mypy_cache/
 
 # pipenv stuff
 Pipfile

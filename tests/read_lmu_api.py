@@ -7,7 +7,7 @@ from __future__ import annotations
 import ctypes
 import sys
 
-sys.path.append(".")
+sys.path.append(__file__.split("pyLMUSharedMemory")[0])
 from pyLMUSharedMemory import lmu_data, lmu_enum
 
 
@@ -151,7 +151,7 @@ def player_wheel_info(data: list[lmu_data.LMUWheel]):
 
 def vehicle_model_info(data: list[lmu_data.LMUVehicleTelemetry], total_vehicles: int):
     print("Available vehicle model list from session:")
-    for model in set(data[i].mVehicleModel for i in range(total_vehicles)):
+    for model in {data[i].mVehicleModel for i in range(total_vehicles)}:
         print(model)
 
 

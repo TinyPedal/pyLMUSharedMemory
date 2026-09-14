@@ -58,13 +58,13 @@ class MMapControl:
     """Memory map control"""
 
     __slots__ = (
-        "_mmap_name",
-        "_mmap_buffer",
-        "_struct",
         "_buffer",
+        "_mmap_buffer",
+        "_mmap_name",
         "_realtime",
-        "update",
+        "_struct",
         "data",
+        "update",
     )
 
     def __init__(self, mmap_name: str, data_struct: ctypes.Structure) -> None:
@@ -74,10 +74,10 @@ class MMapControl:
             mmap_name: mmap filename.
             data_struct: ctypes data structure, ex. lmu_data.SharedMemoryEvent.
         """
-        self._mmap_name = mmap_name
-        self._mmap_buffer = None
-        self._struct = data_struct
         self._buffer = bytearray()
+        self._mmap_buffer = None
+        self._mmap_name = mmap_name
+        self._struct = data_struct
         self._realtime = None
         self.update = None
         self.data = None
