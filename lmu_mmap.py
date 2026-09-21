@@ -1,7 +1,5 @@
 """
-LMU Memory Map Control
-
-Inherit Python mapping of LMU Shared Memory Interface
+LMU Memory Map Control for accessing LMU Shared Memory Interface
 """
 
 from __future__ import annotations
@@ -11,31 +9,14 @@ import logging
 import mmap
 import platform
 
-try:
-    from . import lmu_data
-    from .lmu_data import LMUConstants
-except ImportError:  # standalone, not package
-    import lmu_data
-    from lmu_data import LMUConstants
-
-PLATFORM = platform.system()
-MAX_VEHICLES = LMUConstants.MAX_MAPPED_VEHICLES
-INVALID_INDEX = -1
-
-
-def get_root_logger_name():
-    """Get root logger name"""
-    for logger_name in logging.root.manager.loggerDict:
-        return logger_name
-    return __name__
-
+from ._common import get_root_logger_name
 
 logger = logging.getLogger(get_root_logger_name())
 
 
 def platform_mmap(name: str, size: int) -> mmap.mmap:
     """Platform memory mapping"""
-    if PLATFORM == "Windows":
+    if platform.system() == "Windows":
         return windows_mmap(name, size)
     return linux_mmap(name, size)
 
@@ -136,45 +117,3 @@ class MMapControl:
             == self._realtime.telemetry.activeVehicles
         ):
             self._buffer[:] = self._mmap_buffer
-
-
-def test_api():
-    """API test run"""
-    # Add logger
-    test_handler = logging.StreamHandler()
-    logger.setLevel(logging.INFO)
-    logger.addHandler(test_handler)
-
-    # Test run
-    SEPARATOR = "=" * 50
-    print("Test API - Direct Access")
-    info = MMapControl(LMUConstants.LMU_SHARED_MEMORY_FILE, lmu_data.LMUObjectOut)
-    info.create(1)
-    info.update()
-
-    print(SEPARATOR)
-    print("Test API - Close")
-    info.close()
-
-    print(SEPARATOR)
-    print("Test API - Copy Access")
-    info.create(0)
-    info.update()
-
-    print(SEPARATOR)
-    print("Test API - Read")
-    version = info.data.generic.gameVersion
-    track = info.data.scoring.scoringInfo.mTrackName.decode()
-    vehicle = info.data.telemetry.telemInfo[0].mVehicleName.decode()
-    total = info.data.scoring.scoringInfo.mNumVehicles
-    print(f"version: {version if version else 'not running'}")
-    print(f"track name: {track if version else 'not running'}")
-    print(f"vehicle name: {vehicle if version else 'not running'}")
-    print(f"total cars: {total if version else 'not running'}")
-
-    print(SEPARATOR)
-    info.close()
-
-
-if __name__ == "__main__":
-    test_api()

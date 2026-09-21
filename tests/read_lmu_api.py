@@ -206,6 +206,34 @@ def test_data(info: lmu_data.SimInfo, player_index, selected_player_index):
     vehicle_model_info(info.LMUData.telemetry.telemInfo, info.LMUData.scoring.scoringInfo.mNumVehicles)
 
 
+def test_enum():
+    separator = "-" * 40
+
+    print(separator)
+
+    VEHICLE_CLASS = lmu_enum.enum_map(lmu_enum.LMUVehicleClass)
+    VEHICLE_CHAMPIONSHIP = lmu_enum.enum_map(lmu_enum.LMUVehicleChampionship)
+    COMPOUND_TYPE = lmu_enum.enum_map(lmu_enum.LMUCompoundType)
+    TRACK_GRIP_LEVEL = lmu_enum.enum_map(lmu_enum.LMUTrackGripLevel)
+    CLOUD_COVERAGE = lmu_enum.enum_map(lmu_enum.LMUCloudCoverage)
+
+    print("Enum:")
+    print(lmu_enum.LMUVehicleClass(0))
+    print(lmu_enum.LMUVehicleChampionship(1))
+    print(lmu_enum.LMUCompoundType(2))
+    print(lmu_enum.LMUTrackGripLevel(3))
+    print(lmu_enum.LMUCloudCoverage(4))
+
+    print(separator)
+
+    print("Dict (fast lookup):")
+    print(VEHICLE_CLASS(0))
+    print(VEHICLE_CHAMPIONSHIP(1))
+    print(COMPOUND_TYPE(2))
+    print(TRACK_GRIP_LEVEL(3))
+    print(CLOUD_COVERAGE(4))
+
+
 def verify_data(info: lmu_data.SimInfo, player_index):
     separator = "-" * 40
 
@@ -238,5 +266,7 @@ if __name__ == "__main__":
     selected_player_index = player_index
 
     test_data(info, player_index, selected_player_index)
+
+    test_enum()
 
     verify_data(info, selected_player_index)

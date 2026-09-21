@@ -16,29 +16,7 @@ from __future__ import annotations
 import ctypes
 import mmap
 
-
-# Function
-def typedstruct(cls=None, pack=None):
-    """Generate typed struct"""
-
-    def wrap(cls):
-        if not hasattr(cls, "__annotations__"):
-            raise TypeError("missing __annotations__")
-        # Add _pack_
-        if pack is not None:
-            cls._pack_ = pack
-        # Add _fields_
-        cls._fields_ = [(k, cls.__dict__[k]) for k in cls.__annotations__]
-        return cls
-
-    if cls is None:
-        return wrap
-    return wrap(cls)
-
-
-def _t(v):
-    """Wrapper for type"""
-    return v
+from ._common import _t, typedstruct
 
 
 # Constants
@@ -50,6 +28,7 @@ class LMUConstants:
 
     MAX_MAPPED_VEHICLES: int = 104
     MAX_PATH_LENGTH: int = 260  # maximum length for path on windows
+    INVALID_CAR_INDEX: int = -1
 
 
 # InternalsPlugin

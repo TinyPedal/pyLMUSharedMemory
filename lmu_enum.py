@@ -5,13 +5,8 @@ LMU API Enums mapping, with fast dict lookup function
 from __future__ import annotations
 
 import enum
-from typing import Callable, Iterable
 
-
-def enum_map(reference: Iterable[enum.Enum], default: str = "Unknown") -> Callable[[int], str]:
-    """Generate lookup mapping from enum"""
-    data = {d.value: d.name for d in reference}
-    return lambda index: data.get(index, default)
+from ._common import enum_map
 
 
 class LMUVehicleClass(enum.Enum):
@@ -261,32 +256,3 @@ class LMUCloudCoverage(enum.Enum):
     OvercastAndRain = 8
     OvercastAndHeavyRain = 9
     OvercastAndStorm = 10
-
-
-def test():
-    """Wrap enums into fast lookup dict, returns enum string name"""
-    VEHICLE_CLASS = enum_map(LMUVehicleClass)
-    VEHICLE_CHAMPIONSHIP = enum_map(LMUVehicleChampionship)
-    COMPOUND_TYPE = enum_map(LMUCompoundType)
-    TRACK_GRIP_LEVEL = enum_map(LMUTrackGripLevel)
-    CLOUD_COVERAGE = enum_map(LMUCloudCoverage)
-
-    print("Enum:")
-    print(LMUVehicleClass(0))
-    print(LMUVehicleChampionship(1))
-    print(LMUCompoundType(2))
-    print(LMUTrackGripLevel(3))
-    print(LMUCloudCoverage(4))
-
-    print("-"*40)
-
-    print("Dict (fast lookup):")
-    print(VEHICLE_CLASS(0))
-    print(VEHICLE_CHAMPIONSHIP(1))
-    print(COMPOUND_TYPE(2))
-    print(TRACK_GRIP_LEVEL(3))
-    print(CLOUD_COVERAGE(4))
-
-
-if __name__ == "__main__":
-    test()
