@@ -34,9 +34,9 @@ def _t(v):
 
 
 def enum_map(reference: Iterable[enum.Enum], default: str = "Unknown") -> Callable[[int], str]:
-    """Generate lookup mapping from enum"""
-    data = {d.value: d.name for d in reference}
-    return lambda index: data.get(index, default)
+    """Generate lookup mapping from enum (class)"""
+    func = {d.value: d.name for d in reference}.get
+    return lambda index: func(index, default)
 
 
 def get_root_logger_name():
