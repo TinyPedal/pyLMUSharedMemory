@@ -26,19 +26,19 @@ def windows_mmap(name: str, size: int) -> mmap.mmap:
     return mmap.mmap(-1, size, name)
 
 
-def linux_mmap(name: str, size: int) -> mmap.mmap:
-    """Linux mmap - read data from '/dev/shm/filename'
-
-    The file is owned by the game (or its Wine/Proton bridge), so it is never
-    created here: creating it would leave a wrongly laid out file behind, which
-    other readers (SimHub, CrewChief, etc) would then pick up.
-
-    Raises:
-        FileNotFoundError: file does not exist yet (game not running).
-        ValueError: file is smaller than `size` (not fully set up yet).
-    """
-    # "r+b" opens existing file read/write without creating it
-    with open("/dev/shm/" + name, "r+b") as file:
+def linux_mmap(name: str, size: int) -> mmap.mmap | None:
+    """Linux mmap - read data from '/dev/shm/filename' if available"""
+    with open("/dev/shm/" + name, "a+b") as file:
+        stream_pos = file.tell()
+        if stream_pos == 0:  # file is empty
+            file.write(b"\0" * size)
+            file.flush()
+        elif stream_pos != size:  # file size doesn't match struct size
+            file.seek(0)
+            file.truncate(0)  # clear all data
+            file.seek(0)
+            file.write(b"\0" * size)
+            file.flush()
         return mmap.mmap(file.fileno(), size)
 
 
