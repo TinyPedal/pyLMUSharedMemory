@@ -7,7 +7,7 @@ from __future__ import annotations
 import ctypes
 import logging
 import mmap
-import platform
+import sys
 
 from ._common import get_root_logger_name
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(get_root_logger_name())
 
 def platform_mmap(name: str, size: int) -> mmap.mmap:
     """Platform memory mapping"""
-    if platform.system() == "Windows":
+    if sys.platform == "win32":
         return windows_mmap(name, size)
     return linux_mmap(name, size)
 
