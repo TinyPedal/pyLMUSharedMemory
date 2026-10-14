@@ -28,7 +28,7 @@ def windows_mmap(name: str, size: int) -> mmap.mmap:
 
 def linux_mmap(name: str, size: int) -> mmap.mmap | None:
     """Linux mmap - read data from '/dev/shm/filename' if available"""
-    with open("/dev/shm/" + name, "a+b") as file:
+    with open(f"/dev/shm/{name}", "a+b") as file:
         stream_pos = file.tell()
         if stream_pos == 0:  # file is empty
             file.write(b"\0" * size)
