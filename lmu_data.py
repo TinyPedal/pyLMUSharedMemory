@@ -14,9 +14,8 @@ Type hints & annotation:
 from __future__ import annotations
 
 import ctypes
-import mmap
 
-from ._common import _t, typedstruct
+from ._common import _t, platform_mmap, typedstruct
 
 
 # Constants
@@ -760,10 +759,9 @@ class SimInfo:
     """Simulation info from shared memory"""
 
     def __init__(self):
-        self._lmu_data = mmap.mmap(
-            fileno=0,
-            length=ctypes.sizeof(LMUObjectOut),
-            tagname=LMUConstants.LMU_SHARED_MEMORY_FILE,
+        self._lmu_data = platform_mmap(
+            name=LMUConstants.LMU_SHARED_MEMORY_FILE,
+            size=ctypes.sizeof(LMUObjectOut),
         )
         self.LMUData = LMUObjectOut.from_buffer(self._lmu_data)
 

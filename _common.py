@@ -6,6 +6,8 @@ from __future__ import annotations
 
 import enum
 import logging
+import mmap
+import sys
 from typing import Callable, Iterable
 
 
@@ -44,3 +46,32 @@ def get_root_logger_name():
     for logger_name in logging.root.manager.loggerDict:
         return logger_name
     return __name__
+
+
+# mmap
+def platform_mmap(name: str, size: int) -> mmap.mmap:
+    """Platform memory mapping"""
+    if sys.platform == "win32":
+        return windows_mmap(name, size)
+    return linux_mmap(name, size)
+
+
+def windows_mmap(name: str, size: int) -> mmap.mmap:
+    """Windows mmap"""
+    return mmap.mmap(-1, size, name)
+
+
+def linux_mmap(name: str, size: int) -> mmap.mmap | None:
+    """Linux mmap - read data from '/dev/shm/filename' if available"""
+    with open(f"/dev/shm/{name}", "a+b") as file:
+        stream_pos = file.tell()
+        if stream_pos == 0:  # file is empty
+            file.write(b"\0" * size)
+            file.flush()
+        elif stream_pos != size:  # file size doesn't match struct size
+            file.seek(0)
+            file.truncate(0)  # clear all data
+            file.seek(0)
+            file.write(b"\0" * size)
+            file.flush()
+        return mmap.mmap(file.fileno(), size)
